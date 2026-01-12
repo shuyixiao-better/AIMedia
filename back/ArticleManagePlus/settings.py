@@ -37,7 +37,7 @@ env = environ.Env(
 )
 
 # reading .env file
-environ.Env.read_env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -106,6 +106,18 @@ ASGI_APPLICATION = "ArticleManagePlus.asgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {"default": env.db("DEFAULT_DATABASE", "sqlite:///db.sqlite3")}
+
+# Redis 配置（必需）
+REDIS_URL = env("REDIS_URL")
+if not REDIS_URL:
+    raise ValueError(
+        "REDIS_URL 未配置！\n"
+        "请在 back/.env 文件中配置 Redis 连接：\n"
+        "  REDIS_URL=redis://localhost:6379/1\n\n"
+        "如果还没有安装 Redis，请先安装：\n"
+        "  Windows: 下载 https://github.com/microsoftarchive/redis/releases\n"
+        "  或使用 Docker: docker run -d -p 6379:6379 redis"
+    )
 CACHES = {
     "default": env.cache_url("REDIS_URL"),
 }
